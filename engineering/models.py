@@ -10,10 +10,16 @@ class Phase(models.Model):
     def __str__(self):
         return f"{self.phase}PH"
 
+class Project(models.Model):
+    proj_name = models.CharField(max_length=300)
+    
+    def __str__(self):
+        return f'{self.proj_name}'
+
 # Create your models here.
 class Pump(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    project = models.CharField(max_length=100)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     ph = models.ForeignKey(Phase, on_delete=models.CASCADE)
     flowrate = models.DecimalField(max_digits=9, decimal_places=2)
     height = models.DecimalField(max_digits=9, decimal_places=2)
@@ -22,3 +28,13 @@ class Pump(models.Model):
 
     def __str__(self):
         return f"by {self.user}, Project: {self.project}"
+    
+    
+class ProjectDetails(models.Model):
+    proj_name = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project")
+    description = models.CharField(max_length=300)
+    quantity = models.IntegerField()
+    price = models.DecimalField(max_digits=9, decimal_places=2)
+    
+    def __str__(self):
+        return f"{self.proj_name}"

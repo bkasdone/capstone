@@ -3,16 +3,36 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from .models import Pump, Phase, User
+from .models import *
 # Create your views here.
 
 def index(request):
     if request.method == 'GET':
-        pumps = Pump.objects.all()
-    return render(request, "engineering/index.html", {
-        "pumps": pumps
+        projects = Project.objects.all()
+        return render(request, "engineering/index.html", {
+            "projects": projects
+        })
+    
+    elif request.method == "POST":
+        title = request.POST["proj_title"]
+        new_project = Project(proj_name=title)
+        new_project.save()
+        return HttpResponseRedirect(reverse('project', args=[new_project.id]))
+    
+    
+def project(request, id):
+    if request.method == "GET":
+        projectName = Project.objects.get(pk=id)
+        projDetails = ProjectDetails.objects.filter(proj_name=id)
+    return render(request, "engineering/project.html", {
+        "projDetails":projDetails,
+        "projectName":projectName,
     })
 
+def newProj(request):
+    if request.method == "GET":
+        
+        return render(request, "engineering/new_proj.html")
 
 def login_view(request):
     if request.method == "POST":

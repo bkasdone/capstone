@@ -1,0 +1,47 @@
+{% extends "engineering/layout.html" %}
+
+{% block body %}
+    <div class='container'>
+        <h1><strong>{{projectName}}</strong></h1>
+        
+
+    {% if projDetails %}
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th><strong>#</strong></th>
+            <th><strong>Description</strong></th>
+            <th><strong>Quantity</strong></th>
+            <th><strong>Price</strong></th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for detail in projDetails %}
+            <tr>
+                <td>{{ forloop.counter  }}</td>
+                <td>{{ detail.description }}</td>
+                <td>{{ detail.quantity }}</td>
+                <td>{{ detail.price }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <table class="table">
+        <thead class="thead-dark">
+        <tr>
+            <th><strong>#</strong></th>
+            <th><strong>Description</strong></th>
+            <th><strong>Quantity</strong></th>
+            <th><strong>Price</strong></th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr><td></td>
+                <td>No details available for this project.</td>
+            </tr>
+        </tbody>
+    </table>
+    {% endif %}
+    </div>
+{% endblock %}
