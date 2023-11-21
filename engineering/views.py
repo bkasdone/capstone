@@ -4,13 +4,15 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .models import *
+from django.db.models import Sum
 # Create your views here.
 
 def index(request):
     if request.method == 'GET':
         projects = Project.objects.all()
         return render(request, "engineering/index.html", {
-            "projects": projects
+            "projects": projects,
+
         })
     
     elif request.method == "POST":
@@ -24,9 +26,17 @@ def project(request, id):
     if request.method == "GET":
         projectName = Project.objects.get(pk=id)
         projDetails = ProjectDetails.objects.filter(proj_name=id)
+
+        total_amount_sum = 0
+
+        for detail in projDetails:
+            detail.total_price = detail.price * detail.quantity
+            total_amount_sum += detail.total_price
+
     return render(request, "engineering/project.html", {
         "projDetails":projDetails,
         "projectName":projectName,
+        "total_amount_sum": total_amount_sum,
     })
 
 def newProj(request):

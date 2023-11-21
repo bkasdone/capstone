@@ -1,4 +1,6 @@
 {% extends "engineering/layout.html" %}
+{% load humanize %}
+
 
 {% block body %}
     <div class='container'>
@@ -13,6 +15,7 @@
             <th><strong>Description</strong></th>
             <th><strong>Quantity</strong></th>
             <th><strong>Price</strong></th>
+            <th><strong>Total Amount</strong></th>
         </tr>
         </thead>
         <tbody>
@@ -22,9 +25,16 @@
                 <td>{{ detail.description }}</td>
                 <td>{{ detail.quantity }}</td>
                 <td>{{ detail.price }}</td>
+                <td>{{ detail.total_price|floatformat:"2"|intcomma }}</td>
             </tr>
             {% endfor %}
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" align="right"><strong>Total:</strong></td>
+                <td>{{ total_amount_sum|floatformat:"2"|intcomma }}</td>
+            </tr>
+        </tfoot>
     </table>
     {% else %}
     <table class="table">
