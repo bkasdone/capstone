@@ -1,4 +1,5 @@
 {% extends "engineering/layout.html" %}
+{% load static %}
 
 {% block body %}
     <div class='container'>
@@ -11,7 +12,7 @@
         </div>
         <ul class="list-group">
         {% for project in projects%}
-            <li class="list-group-item"><a href="{% url "project" id=project.id%}">{{ project.proj_name}}</a></li>
+            <li class="list-group-item"><a href="{% url "project" id=project.id%}" class="project-list">{{ project.proj_name }}</a></li>
         {% endfor %}
         </ul>
         <br>
