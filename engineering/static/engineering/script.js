@@ -7,29 +7,27 @@ function addRow() {
     // Get the current number of rows
     var rowNum = table.rows.length;
 
-    // Add cells with contenteditable attribute
-    for (var i = 0; i < 5; i++) {
-        var cell = newRow.insertCell(i);
-        if (i === 0) {
-            cell.innerHTML = rowNum;
-        } else if (i === 4) {
-            cell.innerHTML = '<div contenteditable="false">0.00</div>';
-        } else {
-            var placeholderText = i === 1 ? 'Description' : (i === 2 ? 'Quantity' : 'Price');
-            cell.innerHTML = '<div contenteditable="true" oninput="updateRowTotal(this)">' + placeholderText + '</div>';
-        }
-    }
-
-    var deleteCell = newRow.insertCell(5);
-    deleteCell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>';
-
     // Ensure the existing cells are always editable
     for (var i = 1; i < newRow.cells.length - 1; i++) { // Exclude the last cell with the delete button
         var cell = newRow.cells[i].getElementsByTagName('div')[0];
         cell.contentEditable = 'true';
     }
-}
 
+    // Add cells with contenteditable attribute
+    for (var i = 0; i < 6; i++) {
+        var cell = newRow.insertCell(i);
+        if (i === 0) {
+            cell.innerHTML = rowNum;
+        } else if (i === 5) {
+            cell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>';
+        } else {
+            var placeholderText = i === 1 ? 'Description' : (i === 2 ? 'Quantity' : (i === 3 ? 'Price' : 'Total Amount'));
+            cell.innerHTML = '<div contenteditable="' + (i === 4 ? 'false' : 'true') + '" oninput="updateRowTotal(this)">' + placeholderText + '</div>';
+        }
+    }
+
+    
+}
 
 function deleteRow(button) {
     var row = button.parentNode.parentNode;
@@ -46,7 +44,11 @@ function deleteRow(button) {
 
     // Save the deleted row for undo
     deletedRows.push({ index: rowIndex, data: rowData });
+
+    // Update the total amount
+    updateTotalAmount();
 }
+
 
 function undoDelete() {
     if (deletedRows.length > 0) {
