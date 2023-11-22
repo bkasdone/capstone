@@ -2,7 +2,38 @@
 
 {% block body %}
     <div class='container'>
-        <h2>CREATE NEW PROJECT</h2>
-        
+        <h2>Create New {{ title }}</h2>
+        <label>Select Project: </label>
+        <select class="form-select" aria-label="Default select example" id="projectSelect">
+            <option selected>Projects</option>
+            {% for project in projects %}
+            <option value="{{ project.proj_name }}">{{ project.proj_name }}</option>
+            {% endfor %}
+        </select><br>
+
+        <label for="systemEnglish">
+            <input type="radio" id="systemEnglish" name="system" value="english" checked>
+            English System
+        </label>
+
+        <label for="systemMetric">
+            <input type="radio" id="systemMetric" name="system" value="metric">
+            Metric System
+        </label><br>
+
+        <label>Recommended power of the pump: <span id="result"></span>HP</label><br>
+
+        <label for="customRange1" class="form-label">Flow rate:</label>
+        <input type="range" class="form-range" min="0" max="100" id="flowRateRange"><br>
+        <div>Value: <input type="number" id="flowRate" min="0" max="100"> GPM</div><br>
+
+        <label for="customRange1" class="form-label">Total head:</label>
+        <input type="range" class="form-range" id="totalHeadRange"><br>
+        <div>Value: <input type="number" id="totalHead" min="0" max="100"> ft.</div><br>
+
+        <label for="customRange1" class="form-label">Efficiency:</label>
+        <input type="range" class="form-range" id="efficiencyRange"><br>
+        <div>Value: <input type="number" id="efficiency" min="0" max="100">%</div><br>
     </div>
+
 {% endblock %}

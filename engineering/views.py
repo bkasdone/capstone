@@ -39,10 +39,26 @@ def project(request, id):
         "total_amount_sum": total_amount_sum,
     })
 
-def newProj(request):
+def newProj(request, title):
     if request.method == "GET":
+        if title == 'Pump':
+            projects = Project.objects.all()
+            return render(request, "engineering/new_proj.html", {
+                "title": title,
+                "projects": projects,
+            })
         
-        return render(request, "engineering/new_proj.html")
+        elif title == 'Chemical Pump':
+            return render(request, "engineering/new_proj.html", {
+                "title": title,
+                "projects": projects,
+            })
+        elif title == 'Roots Blower':
+            return render(request, "engineering/new_proj.html", {
+                "title": title,
+                "projects": projects,
+            })
+        
 
 def login_view(request):
     if request.method == "POST":

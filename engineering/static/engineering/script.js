@@ -118,3 +118,63 @@ function updateTotalAmount() {
     totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+function calculateHorsepower() {
+    var flowRate = parseFloat(document.getElementById("flowRate").value);
+    var totalHead = parseFloat(document.getElementById("totalHead").value);
+    var efficiency = parseFloat(document.getElementById("efficiency").value);
+    var systemType = document.querySelector('input[name="system"]:checked').value;
+
+    // Check if input values are valid
+    if (isNaN(flowRate) || isNaN(totalHead) || isNaN(efficiency)) {
+        document.getElementById("result").innerHTML = "Invalid input values";
+        return;
+    }
+
+    // Convert efficiency percentage to decimal
+    efficiency = efficiency / 100;
+
+    // Choose the appropriate conversion factor based on the selected system
+    var conversionFactor = (systemType === 'english') ? 3960 : 75;
+
+    // Calculate pump horsepower
+    var horsepower = (flowRate * totalHead) / (conversionFactor * efficiency);
+
+    // Display the result
+    document.getElementById("result").innerHTML = "Pump Horsepower: " + horsepower.toFixed(2) ;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Get all sliders and their corresponding input fields
+    var sliders = document.querySelectorAll(".form-range");
+    var outputs = document.querySelectorAll("input[type=number]");
+
+    sliders.forEach(function (slider, index) {
+        // Set the initial slider value based on the input value
+        outputs[index].value = slider.value;
+
+        // Function to update the input value and slider value
+        function updateValues(value) {
+            // Ensure the input value is a valid number
+            var inputValue = parseFloat(value);
+            if (!isNaN(inputValue) && inputValue >= slider.min && inputValue <= slider.max) {
+                slider.value = inputValue;
+                outputs[index].value = inputValue;
+                calculateHorsepower(); // Update horsepower on any change
+            }
+        }
+
+        // Update the input value when the slider value changes
+        slider.oninput = function () {
+            outputs[index].value = this.value;
+            calculateHorsepower(); // Update horsepower on any change
+        };
+
+        // Update the slider value when the input value changes
+        outputs[index].oninput = function () {
+            updateValues(this.value);
+        };
+
+        // Calculate and display initial horsepower on page load
+        calculateHorsepower();
+    });
+});
