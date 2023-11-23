@@ -5,10 +5,10 @@ from django.core.validators import MaxValueValidator
 User = get_user_model()
 
 class Phase(models.Model):
-    phase = models.IntegerField()
+    phase = models.CharField(max_length=20)
 
     def __str__(self):
-        return f"{self.phase}PH"
+        return f"{self.phase}"
 
 class Project(models.Model):
     proj_name = models.CharField(max_length=300)
@@ -25,6 +25,7 @@ class Pump(models.Model):
     height = models.DecimalField(max_digits=9, decimal_places=2)
     efficiency = models.DecimalField(max_digits=3, decimal_places=2, validators=[MaxValueValidator(limit_value=1)])
     quantity = models.IntegerField(blank=True, null=True)
+    price = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return f"by {self.user}, Project: {self.project}"

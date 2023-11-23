@@ -3,44 +3,60 @@
 {% block body %}
     <div class='container'>
         <h2>Create New {{ title }}</h2>
-        <label>Select Project: </label>
-        {% if title == "Submersible Pump" %}
-        <select class="form-select" aria-label="Default select example" id="projectSelect">
-            <option selected>Projects</option>
-            {% for project in projects %}
-            <option value="{{ project.proj_name }}">{{ project.proj_name }}</option>
-            {% endfor %}
-        </select><br>
-        <img src="/static/engineering/{{title}}.png" alt="pump" class="image"><br>
-        <label for="systemEnglish">
-            <input type="radio" id="systemEnglish" class="form-radio" name="system" value="english" checked>
-            English System
-        </label>
+        <form action="{% url "newProj" title=title %}" method="POST">
+            {% csrf_token %}
+            <label>Select Project: </label>
+            {% if title == "Submersible Pump" %}
+            <select class="form-select" aria-label="Default select example" id="projectSelect" name="projectSelect">
+                <option selected>Projects</option>
+                {% for project in projects %}
+                <option value="{{ project.proj_name }}">{{ project.proj_name }}</option>
+                {% endfor %}
+            </select><br>
+            <img src="/static/engineering/{{title}}.png" alt="pump" class="image"><br>
+            <label for="systemEnglish">
+                <input type="radio" id="systemEnglish" class="form-radio" name="system" value="english" checked>
+                English System
+            </label>
 
-        <label for="systemMetric" class="ml-3">
-            <input type="radio" id="systemMetric" class="form-radio" name="system" value="metric">
-            Metric System
-        </label><br>
+            <label for="systemMetric" class="ml-3">
+                <input type="radio" id="systemMetric" class="form-radio" name="system" value="metric">
+                Metric System
+            </label><br>
 
-        <h6>Recommended power: <strong><span id="result"></span><span class="power-unit"></span></strong></h6><br>
+            <h5>Recommended power: <strong><span id="result"></span><u><span class="power-unit mt-5"></span></u></strong></h5><br>
 
-        <h6 for="customRange1" class="form-label">Flow rate:</h6>
-        <input type="range" class="form-range radio-style" min="0" max="300" id="flowRateRange"><br>
-        <h6>Value: <input type="number" id="flowRate"> 
-            <span class="flowrate-unit"></span>
-        </h6><br>
+            <label for="customRange1" class="form-label">Flow rate:</label>
+            <input type="range" class="form-range radio-style" min="0" max="300" id="flowRateRange"><br>
+            <label>(<u><span class="flowrate-unit" data-toggle="tooltip" title=""></span></u>): </label><input type="number" id="flowRate">  
+            <br><br>
 
-        <h6 for="customRange1" class="form-label">Total head:</h6>
-        <input type="range" class="form-range radio-style" id="totalHeadRange" min="0" max="300"><br>
-        <h6>Value: <input type="number" id="totalHead"> 
-            <span class="totalHead-unit"></span>
-        </h6><br>
+            <label for="customRange1" class="form-label">Total head:</label>
+            <input type="range" class="form-range radio-style" id="totalHeadRange" min="0" max="300"><br>
+            <label>(<u><span data-toggle="tooltip" title="" class="totalHead-unit"></span></u>): </label><input type="number" id="totalHead"> 
+                
+            <br><br>
 
-        <h6 for="customRange1" class="form-label">Efficiency:</h6>
-        <input type="range" class="form-range radio-style" id="efficiencyRange" min="0" max="100"><br>
-        <h6>Value: <input type="number" id="efficiency">
-            %
-        </h6><br>
+            <label for="customRange1" class="form-label">Efficiency:</label>
+            <input type="range" class="form-range radio-style" id="efficiencyRange" min="0" max="100"><br>
+            <label>(<u><span data-toggle="tooltip" title="percent">%</span></u>): </label><input type="number" id="efficiency" >
+                
+            <br><br>
+
+            <label>Power System: </label>
+            <select class="form-select" aria-label="Default select example">
+                <option selected>--Select Power System--</option>
+                {% for phase in phases %}
+                    <option value="{{ phase.phase }}" name="phase">{{ phase.phase }}</option>
+                {% endfor %}
+            </select><br>
+
+            <label>Quantity: </label>
+            <input type="number" name="quantity"><br>
+
+            <label>Price: </label>
+            <input type="number" name="price"><br>
+        </form>
         {% endif %}
     </div>
 

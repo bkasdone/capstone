@@ -21,10 +21,26 @@ input[type=number]::-webkit-outer-spin-button {
     
 }
 
+input[type=number] {
+    width: 50px;
+}
+
 .radio-style {
     width: 250px;
 }
 
 .image {
     height: 100px;
+    margin: 20px;
+}
+
+label {
+    width: 150px;
+    font-weight: 600;
+}
+
+u {    
+    border-bottom: 1px dotted #000;
+    text-decoration: none;
+    cursor: pointer;
 }

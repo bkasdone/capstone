@@ -42,21 +42,25 @@ def project(request, id):
 def newProj(request, title):
     if request.method == "GET":
         projects = Project.objects.all()
+        phases = Phase.objects.all()
         if title == 'Submersible Pump':
             return render(request, "engineering/new_proj.html", {
                 "title": title,
                 "projects": projects,
+                "phases": phases,
             })
         
         elif title == 'Chemical Pump':
             return render(request, "engineering/new_proj.html", {
                 "title": title,
                 "projects": projects,
+                "phases": phases,
             })
         elif title == 'Roots Blower':
             return render(request, "engineering/new_proj.html", {
                 "title": title,
                 "projects": projects,
+                "phases": phases,
             })
         
 

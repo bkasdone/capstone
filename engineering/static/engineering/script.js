@@ -128,7 +128,7 @@ function calculateHorsepower() {
 
     let horsepower = (flowRate * totalHead) / (conversionFactor * efficiency)
 
-    document.getElementById("result").innerHTML = horsepower.toFixed(2) 
+    document.getElementById("result").innerHTML = horsepower.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") 
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -164,13 +164,19 @@ document.addEventListener("DOMContentLoaded", function () {
     function updateUnits() {
         if (radios[0].checked) {
             document.querySelector(".power-unit").innerHTML = " HP"
-            document.querySelector(".flowrate-unit").innerHTML = " GPM"
-            document.querySelector(".totalHead-unit").innerHTML = " ft"
+            document.querySelector(".power-unit").title = "Horsepower; Formula: (FlowRate * Total Head) / (3960 * Efficiency)"
+            document.querySelector(".flowrate-unit").innerHTML = "GPM"
+            document.querySelector(".flowrate-unit").title = "Gallon per minute"
+            document.querySelector(".totalHead-unit").innerHTML = "ft"
+            document.querySelector(".totalHead-unit").title = "Feet"
             calculateHorsepower()
         } else {
             document.querySelector(".power-unit").innerHTML = " KWH"
-            document.querySelector(".flowrate-unit").innerHTML = " m3/hr or L/s"
-            document.querySelector(".totalHead-unit").innerHTML = " m"
+            document.querySelector(".power-unit").title = "Kilowatt Hour; Formula: (FlowRate * Total Head) / (75 * Efficiency)"
+            document.querySelector(".flowrate-unit").innerHTML = "m3/hr or L/s"
+            document.querySelector(".flowrate-unit").title = "Cubic meter per hour or Liter per second"
+            document.querySelector(".totalHead-unit").innerHTML = "m"
+            document.querySelector(".totalHead-unit").title = "Meter"
             calculateHorsepower()
         }
     }
