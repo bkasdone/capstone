@@ -4,13 +4,14 @@
     <div class='container'>
         <h2>Create New {{ title }}</h2>
         <label>Select Project: </label>
+        {% if title == "Submersible Pump" %}
         <select class="form-select" aria-label="Default select example" id="projectSelect">
             <option selected>Projects</option>
             {% for project in projects %}
             <option value="{{ project.proj_name }}">{{ project.proj_name }}</option>
             {% endfor %}
         </select><br>
-
+        <img src="/static/engineering/{{title}}.png" alt="pump" class="image"><br>
         <label for="systemEnglish">
             <input type="radio" id="systemEnglish" class="form-radio" name="system" value="english" checked>
             English System
@@ -21,7 +22,7 @@
             Metric System
         </label><br>
 
-        <h6>Recommended power of the pump: <strong><span id="result"></span><span class="power-unit"></span></strong></h6><br>
+        <h6>Recommended power: <strong><span id="result"></span><span class="power-unit"></span></strong></h6><br>
 
         <h6 for="customRange1" class="form-label">Flow rate:</h6>
         <input type="range" class="form-range radio-style" min="0" max="300" id="flowRateRange"><br>
@@ -40,6 +41,7 @@
         <h6>Value: <input type="number" id="efficiency">
             %
         </h6><br>
+        {% endif %}
     </div>
 
 {% endblock %}
