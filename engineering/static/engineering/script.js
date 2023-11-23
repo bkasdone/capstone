@@ -1,180 +1,161 @@
-var deletedRows = [];
+//For adding and deleting rows in a Project
+let deletedRows = []
 
 function addRow() {
-    var table = document.getElementById("projectTable").getElementsByTagName('tbody')[0];
-    var newRow = table.insertRow(table.rows.length);
+    let table = document.getElementById("projectTable").getElementsByTagName('tbody')[0]
+    let newRow = table.insertRow(table.rows.length)
+    let rowNum = table.rows.length
 
-    // Get the current number of rows
-    var rowNum = table.rows.length;
-
-    // Ensure the existing cells are always editable
-    for (var i = 1; i < newRow.cells.length - 1; i++) { // Exclude the last cell with the delete button
-        var cell = newRow.cells[i].getElementsByTagName('div')[0];
-        cell.contentEditable = 'true';
+    for (let i = 1; i < newRow.cells.length - 1; i++) {
+        let cell = newRow.cells[i].getElementsByTagName('div')[0]
+        cell.contentEditable = 'true'
     }
 
-    // Add cells with contenteditable attribute
-    for (var i = 0; i < 6; i++) {
-        var cell = newRow.insertCell(i);
+    for (let i = 0; i < 6; i++) {
+        let cell = newRow.insertCell(i)
         if (i === 0) {
-            cell.innerHTML = rowNum;
+            cell.innerHTML = rowNum
         } else if (i === 5) {
-            cell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>';
+            cell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>'
         } else {
-            var placeholderText = i === 1 ? 'Description' : (i === 2 ? 'Quantity' : (i === 3 ? 'Price' : 'Total Amount'));
-            cell.innerHTML = '<div contenteditable="' + (i === 4 ? 'false' : 'true') + '" oninput="updateRowTotal(this)">' + placeholderText + '</div>';
+            let placeholderText = i === 1 ? 'Description' : (i === 2 ? 'Quantity' : (i === 3 ? 'Price' : 'Total Amount'))
+            cell.innerHTML = '<div contenteditable="' + (i === 4 ? 'false' : 'true') + '" oninput="updateRowTotal(this)">' + placeholderText + '</div>'
         }
     }
-
     
 }
 
 function deleteRow(button) {
-    var row = button.parentNode.parentNode;
-    var rowIndex = row.rowIndex;
-    var rowData = [];
+    let row = button.parentNode.parentNode
+    let rowIndex = row.rowIndex
+    let rowData = []
 
-    // Save row data before deletion
-    for (var i = 0; i < row.cells.length - 1; i++) {
-        rowData.push(row.cells[i].innerHTML);
+    for (let i = 0; i < row.cells.length - 1; i++) {
+        rowData.push(row.cells[i].innerHTML)
     }
 
-    // Remove the row from the table
-    row.parentNode.removeChild(row);
+    row.parentNode.removeChild(row)
 
-    // Save the deleted row for undo
-    deletedRows.push({ index: rowIndex, data: rowData });
+    deletedRows.push({ index: rowIndex, data: rowData })
 
-    // Update the total amount
-    updateTotalAmount();
+    updateTotalAmount()
 }
 
-
+// Undo Button
 function undoDelete() {
     if (deletedRows.length > 0) {
-        var lastDeleted = deletedRows.pop();
-        var table = document.getElementById("projectTable").getElementsByTagName('tbody')[0];
-        var newRow = table.insertRow(lastDeleted.index - 1);
+        let lastDeleted = deletedRows.pop()
+        let table = document.getElementById("projectTable").getElementsByTagName('tbody')[0]
+        let newRow = table.insertRow(lastDeleted.index - 1)
 
-        // Add cells and restore data
-        for (var i = 0; i < lastDeleted.data.length; i++) {
-            var cell = newRow.insertCell(i);
-            cell.innerHTML = lastDeleted.data[i];
+        for (let i = 0; i < lastDeleted.data.length; i++) {
+            let cell = newRow.insertCell(i)
+            cell.innerHTML = lastDeleted.data[i]
         }
 
-        // Add the "Delete" button to the last cell
-        var deleteCell = newRow.insertCell(lastDeleted.data.length);
-        deleteCell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>';
+        let deleteCell = newRow.insertCell(lastDeleted.data.length)
+        deleteCell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>'
     }
 }
 
-
+// Update the total amount in the table
 function updateRowTotal(input) {
-    var row = input.parentNode.parentNode;
-    var quantity = parseFloat(row.cells[2].getElementsByTagName('div')[0].innerText) || parseFloat(row.cells[2].getElementsByTagName('div')[0].textContent);
-    var price = parseFloat(row.cells[3].getElementsByTagName('div')[0].innerText) || parseFloat(row.cells[3].getElementsByTagName('div')[0].textContent);
-    var totalAmountCell = row.cells[4].getElementsByTagName('div')[0];
+    let row = input.parentNode.parentNode;
+    let quantity = parseFloat(row.cells[2].getElementsByTagName('div')[0].innerText) || parseFloat(row.cells[2].getElementsByTagName('div')[0].textContent)
+    let price = parseFloat(row.cells[3].getElementsByTagName('div')[0].innerText) || parseFloat(row.cells[3].getElementsByTagName('div')[0].textContent)
+    let totalAmountCell = row.cells[4].getElementsByTagName('div')[0]
 
     if (!isNaN(quantity) && !isNaN(price)) {
-        var totalAmount = quantity * price;
-        totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        updateTotalAmount(); // Update the total below the table
+        let totalAmount = quantity * price
+        totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        updateTotalAmount()
     }
 }
 
+// Update the total in the table
 function updateTotalAmount(row) {
-    var quantityCell = row.cells[2].getElementsByTagName('div')[0];
-    var priceCell = row.cells[3].getElementsByTagName('div')[0];
-    var totalAmountCell = row.cells[4].getElementsByTagName('div')[0];
+    let quantityCell = row.cells[2].getElementsByTagName('div')[0]
+    let priceCell = row.cells[3].getElementsByTagName('div')[0]
+    let totalAmountCell = row.cells[4].getElementsByTagName('div')[0]
 
-    var quantity = parseFloat(quantityCell.innerText) || parseFloat(quantityCell.textContent);
-    var price = parseFloat(priceCell.innerText) || parseFloat(priceCell.textContent);
+    let quantity = parseFloat(quantityCell.innerText) || parseFloat(quantityCell.textContent)
+    let price = parseFloat(priceCell.innerText) || parseFloat(priceCell.textContent)
 
     if (!isNaN(quantity) && !isNaN(price)) {
-        var totalAmount = quantity * price;
-        totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        updateTotalAmount(); // Update the total below the table
+        let totalAmount = quantity * price
+        totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        updateTotalAmount()
     }
 }
 
+// Update the total below the table
 function updateTotalAmount() {
-    var totalAmountCell = document.getElementById("totalAmount");
-    var table = document.getElementById("projectTable");
-    var rows = table.getElementsByTagName("tr");
-    var totalAmount = 0;
+    let totalAmountCell = document.getElementById("totalAmount")
+    let table = document.getElementById("projectTable")
+    let rows = table.getElementsByTagName("tr")
+    let totalAmount = 0
 
-    for (var i = 1; i < rows.length - 1; i++) { // Skip the header and total rows
-        var quantityCell = rows[i].cells[2].getElementsByTagName('div')[0];
-        var priceCell = rows[i].cells[3].getElementsByTagName('div')[0];
+    for (let i = 1; i < rows.length - 1; i++) {
+        let quantityCell = rows[i].cells[2].getElementsByTagName('div')[0]
+        let priceCell = rows[i].cells[3].getElementsByTagName('div')[0]
 
-        var quantity = parseFloat(quantityCell.innerText) || parseFloat(quantityCell.textContent);
-        var price = parseFloat(priceCell.innerText) || parseFloat(priceCell.textContent);
+        let quantity = parseFloat(quantityCell.innerText) || parseFloat(quantityCell.textContent)
+        let price = parseFloat(priceCell.innerText) || parseFloat(priceCell.textContent)
 
         if (!isNaN(quantity) && !isNaN(price)) {
-            totalAmount += quantity * price;
+            totalAmount += quantity * price
         }
     }
 
-    totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
+// Pump Power Consumption Computation
 function calculateHorsepower() {
-    var flowRate = parseFloat(document.getElementById("flowRate").value);
-    var totalHead = parseFloat(document.getElementById("totalHead").value);
-    var efficiency = parseFloat(document.getElementById("efficiency").value);
-    var systemType = document.querySelector('input[name="system"]:checked').value;
+    let flowRate = parseFloat(document.getElementById("flowRate").value)
+    let totalHead = parseFloat(document.getElementById("totalHead").value)
+    let efficiency = parseFloat(document.getElementById("efficiency").value)
+    let systemType = document.querySelector('input[name="system"]:checked').value
+    let conversionFactor = (systemType === 'english') ? 3960 : 75
+    
 
-    // Check if input values are valid
     if (isNaN(flowRate) || isNaN(totalHead) || isNaN(efficiency)) {
-        document.getElementById("result").innerHTML = "Invalid input values";
-        return;
+        document.getElementById("result").innerHTML = "Invalid input values"
+        return
     }
 
-    // Convert efficiency percentage to decimal
-    efficiency = efficiency / 100;
+    efficiency = efficiency / 100
 
-    // Choose the appropriate conversion factor based on the selected system
-    var conversionFactor = (systemType === 'english') ? 3960 : 75;
+    let horsepower = (flowRate * totalHead) / (conversionFactor * efficiency)
 
-    // Calculate pump horsepower
-    var horsepower = (flowRate * totalHead) / (conversionFactor * efficiency);
-
-    // Display the result
-    document.getElementById("result").innerHTML = horsepower.toFixed(2) ;
+    document.getElementById("result").innerHTML = horsepower.toFixed(2) 
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Get all sliders and their corresponding input fields
-    var sliders = document.querySelectorAll(".form-range");
-    var outputs = document.querySelectorAll("input[type=number]");
-    var radios = document.querySelectorAll(".form-radio")
+    let sliders = document.querySelectorAll(".form-range")
+    let outputs = document.querySelectorAll("input[type=number]")
+    let radios = document.querySelectorAll(".form-radio")
 
     sliders.forEach(function (slider, index) {
-        // Set the initial slider value based on the input value
-        outputs[index].value = slider.value;
+        outputs[index].value = slider.value
 
-        // Update the input value when the slider value changes
         slider.oninput = function () {
-            outputs[index].value = this.value;
-            calculateHorsepower(); // Update horsepower on any change
+            outputs[index].value = this.value
+            calculateHorsepower()
         };
 
-        // Calculate and display initial horsepower on page load
-        calculateHorsepower();
+        calculateHorsepower()
     });
 
     outputs.forEach(function (output, index) {
-        // Function to update the input value and slider value
         function updateValues(value) {
-            // Ensure the input value is a valid number
-            var inputValue = parseFloat(value);
-            sliders[index].value = inputValue;
-            calculateHorsepower(); // Update horsepower on any change
+            let inputValue = parseFloat(value)
+            sliders[index].value = inputValue
+            calculateHorsepower()
         }
 
-        // Update the slider value when the input value changes
         output.oninput = function () {
-            updateValues(this.value);
+            updateValues(this.value)
             calculateHorsepower()
         };
 
@@ -182,25 +163,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateUnits() {
         if (radios[0].checked) {
-            document.querySelector(".power-unit").innerHTML = " HP";
-            document.querySelector(".flowrate-unit").innerHTML = " GPM";
-            document.querySelector(".totalHead-unit").innerHTML = " ft";
+            document.querySelector(".power-unit").innerHTML = " HP"
+            document.querySelector(".flowrate-unit").innerHTML = " GPM"
+            document.querySelector(".totalHead-unit").innerHTML = " ft"
             calculateHorsepower()
         } else {
-            document.querySelector(".power-unit").innerHTML = " KWH";
-            document.querySelector(".flowrate-unit").innerHTML = " m3/hr or L/s";
-            document.querySelector(".totalHead-unit").innerHTML = " m";
+            document.querySelector(".power-unit").innerHTML = " KWH"
+            document.querySelector(".flowrate-unit").innerHTML = " m3/hr or L/s"
+            document.querySelector(".totalHead-unit").innerHTML = " m"
             calculateHorsepower()
         }
     }
 
     radios.forEach(function (radioButton) {
-        radioButton.addEventListener("change", updateUnits);
+        radioButton.addEventListener("change", updateUnits)
         
-    });
+    })
 
-    // Call the function on page load
-    updateUnits();
+    updateUnits()
     
-});
+})
 
