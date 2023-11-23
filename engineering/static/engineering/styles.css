@@ -20,3 +20,8 @@ input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: "Always Show Up/Down Arrows";
     
 }
+
+.radio-style {
+    width: 250px;
+}
+

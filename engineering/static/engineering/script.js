@@ -140,28 +140,18 @@ function calculateHorsepower() {
     var horsepower = (flowRate * totalHead) / (conversionFactor * efficiency);
 
     // Display the result
-    document.getElementById("result").innerHTML = "Pump Horsepower: " + horsepower.toFixed(2) ;
+    document.getElementById("result").innerHTML = horsepower.toFixed(2) ;
 }
 
 document.addEventListener("DOMContentLoaded", function () {
     // Get all sliders and their corresponding input fields
     var sliders = document.querySelectorAll(".form-range");
     var outputs = document.querySelectorAll("input[type=number]");
+    var radios = document.querySelectorAll(".form-radio")
 
     sliders.forEach(function (slider, index) {
         // Set the initial slider value based on the input value
         outputs[index].value = slider.value;
-
-        // Function to update the input value and slider value
-        function updateValues(value) {
-            // Ensure the input value is a valid number
-            var inputValue = parseFloat(value);
-            if (!isNaN(inputValue) && inputValue >= slider.min && inputValue <= slider.max) {
-                slider.value = inputValue;
-                outputs[index].value = inputValue;
-                calculateHorsepower(); // Update horsepower on any change
-            }
-        }
 
         // Update the input value when the slider value changes
         slider.oninput = function () {
@@ -169,12 +159,48 @@ document.addEventListener("DOMContentLoaded", function () {
             calculateHorsepower(); // Update horsepower on any change
         };
 
-        // Update the slider value when the input value changes
-        outputs[index].oninput = function () {
-            updateValues(this.value);
-        };
-
         // Calculate and display initial horsepower on page load
         calculateHorsepower();
     });
+
+    outputs.forEach(function (output, index) {
+        // Function to update the input value and slider value
+        function updateValues(value) {
+            // Ensure the input value is a valid number
+            var inputValue = parseFloat(value);
+            sliders[index].value = inputValue;
+            calculateHorsepower(); // Update horsepower on any change
+        }
+
+        // Update the slider value when the input value changes
+        output.oninput = function () {
+            updateValues(this.value);
+            calculateHorsepower()
+        };
+
+    });
+
+    function updateUnits() {
+        if (radios[0].checked) {
+            document.querySelector(".power-unit").innerHTML = " HP";
+            document.querySelector(".flowrate-unit").innerHTML = " GPM";
+            document.querySelector(".totalHead-unit").innerHTML = " ft";
+            calculateHorsepower()
+        } else {
+            document.querySelector(".power-unit").innerHTML = " KWH";
+            document.querySelector(".flowrate-unit").innerHTML = " m3/hr or L/s";
+            document.querySelector(".totalHead-unit").innerHTML = " m";
+            calculateHorsepower()
+        }
+    }
+
+    radios.forEach(function (radioButton) {
+        radioButton.addEventListener("change", updateUnits);
+        
+    });
+
+    // Call the function on page load
+    updateUnits();
+    
 });
+

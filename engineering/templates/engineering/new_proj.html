@@ -12,28 +12,34 @@
         </select><br>
 
         <label for="systemEnglish">
-            <input type="radio" id="systemEnglish" name="system" value="english" checked>
+            <input type="radio" id="systemEnglish" class="form-radio" name="system" value="english" checked>
             English System
         </label>
 
-        <label for="systemMetric">
-            <input type="radio" id="systemMetric" name="system" value="metric">
+        <label for="systemMetric" class="ml-3">
+            <input type="radio" id="systemMetric" class="form-radio" name="system" value="metric">
             Metric System
         </label><br>
 
-        <label>Recommended power of the pump: <span id="result"></span>HP</label><br>
+        <h6>Recommended power of the pump: <strong><span id="result"></span><span class="power-unit"></span></strong></h6><br>
 
-        <label for="customRange1" class="form-label">Flow rate:</label>
-        <input type="range" class="form-range" min="0" max="100" id="flowRateRange"><br>
-        <div>Value: <input type="number" id="flowRate" min="0" max="100"> GPM</div><br>
+        <h6 for="customRange1" class="form-label">Flow rate:</h6>
+        <input type="range" class="form-range radio-style" min="0" max="300" id="flowRateRange"><br>
+        <h6>Value: <input type="number" id="flowRate"> 
+            <span class="flowrate-unit"></span>
+        </h6><br>
 
-        <label for="customRange1" class="form-label">Total head:</label>
-        <input type="range" class="form-range" id="totalHeadRange"><br>
-        <div>Value: <input type="number" id="totalHead" min="0" max="100"> ft.</div><br>
+        <h6 for="customRange1" class="form-label">Total head:</h6>
+        <input type="range" class="form-range radio-style" id="totalHeadRange" min="0" max="300"><br>
+        <h6>Value: <input type="number" id="totalHead"> 
+            <span class="totalHead-unit"></span>
+        </h6><br>
 
-        <label for="customRange1" class="form-label">Efficiency:</label>
-        <input type="range" class="form-range" id="efficiencyRange"><br>
-        <div>Value: <input type="number" id="efficiency" min="0" max="100">%</div><br>
+        <h6 for="customRange1" class="form-label">Efficiency:</h6>
+        <input type="range" class="form-range radio-style" id="efficiencyRange" min="0" max="100"><br>
+        <h6>Value: <input type="number" id="efficiency">
+            %
+        </h6><br>
     </div>
 
 {% endblock %}
