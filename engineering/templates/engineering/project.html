@@ -3,9 +3,14 @@
 
 {% block body %}
     <div class='container'>
-        <h1><strong>{{ projectName }}</strong></h1>
-
-        {% if projDetails %}
+        <div class="row justify-content-between mt-3 ml-1">
+            <h1><strong>{{ projectName }}</strong></h1>
+            <div class="column mt-2 mr-3">
+                <button class="btn btn-primary" onclick="addRow()">Add Row</button>
+                <button class="btn btn-success" onclick="undoDelete()">Undo</button>
+            </div>
+        </div>
+        
         <table class="table" id="projectTable">
             <thead class="thead-dark">
             <tr>
@@ -14,9 +19,10 @@
                 <th><strong>Quantity</strong></th>
                 <th><strong>Price</strong></th>
                 <th><strong>Total Amount</strong></th>
-                <th><strong>Action</strong></th>
+                <th><strong>Delete</strong></th>
             </tr>
             </thead>
+            {% if projDetails %}
             <tbody>
                 {% for detail in projDetails %}
                 <tr>
@@ -36,21 +42,8 @@
                 </tr>
             </tfoot>
         </table>
-        <button onclick="addRow()">Add Row</button>
-        <button onclick="undoDelete()">Undo</button>
 
         {% else %}
-        <table class="table" id="projectTable">
-            <thead class="thead-dark">
-            <tr>
-                <th><strong>#</strong></th>
-                <th><strong>Description</strong></th>
-                <th><strong>Quantity</strong></th>
-                <th><strong>Price</strong></th>
-                <th><strong>Total Amount</strong></th>
-                <th><strong>Action</strong></th>
-            </tr>
-            </thead>
             <tbody>
                 <tr>
                     <td>1</td>
@@ -68,8 +61,6 @@
                 </tr>
             </tfoot>
         </table>
-        <button onclick="addRow()">Add Row</button>
-        <button onclick="undoDelete()">Undo</button>
         {% endif %}
     </div>
 

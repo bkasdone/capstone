@@ -1,4 +1,8 @@
 //For adding and deleting rows in a Project
+document.addEventListener('contextmenu', function (e) {
+    e.preventDefault(); // Disable right-click context menu
+})
+
 let deletedRows = []
 
 function addRow() {
@@ -22,7 +26,7 @@ function addRow() {
             cell.innerHTML = '<div contenteditable="' + (i === 4 ? 'false' : 'true') + '" oninput="updateRowTotal(this)">' + placeholderText + '</div>'
         }
     }
-    
+
 }
 
 function deleteRow(button) {
@@ -111,13 +115,13 @@ function updateTotalAmount() {
 }
 
 // Pump Power Consumption Computation
-function calculateHorsepower() {
+function calculatePower() {
     let flowRate = parseFloat(document.getElementById("flowRate").value)
     let totalHead = parseFloat(document.getElementById("totalHead").value)
     let efficiency = parseFloat(document.getElementById("efficiency").value)
     let systemType = document.querySelector('input[name="system"]:checked').value
     let conversionFactor = (systemType === 'english') ? 3960 : 75
-    
+
 
     if (isNaN(flowRate) || isNaN(totalHead) || isNaN(efficiency)) {
         document.getElementById("result").innerHTML = "Invalid input values"
@@ -128,7 +132,12 @@ function calculateHorsepower() {
 
     let horsepower = (flowRate * totalHead) / (conversionFactor * efficiency)
 
-    document.getElementById("result").innerHTML = horsepower.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",") 
+    document.getElementById("result").innerHTML = horsepower.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    document.getElementById("power").value = horsepower.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    document.getElementById("flowRateHidden").value = parseFloat(flowRate);
+    document.getElementById("totalHeadHidden").value = parseFloat(totalHead);
+    document.getElementById("efficiencyHidden").value = parseFloat(efficiency);
+
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -141,22 +150,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         slider.oninput = function () {
             outputs[index].value = this.value
-            calculateHorsepower()
+            calculatePower()
         };
 
-        calculateHorsepower()
+        calculatePower()
     });
 
     outputs.forEach(function (output, index) {
         function updateValues(value) {
             let inputValue = parseFloat(value)
             sliders[index].value = inputValue
-            calculateHorsepower()
+            calculatePower()
         }
 
         output.oninput = function () {
             updateValues(this.value)
-            calculateHorsepower()
+            calculatePower()
         };
 
     });
@@ -169,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector(".flowrate-unit").title = "Gallon per minute"
             document.querySelector(".totalHead-unit").innerHTML = "ft"
             document.querySelector(".totalHead-unit").title = "Feet"
-            calculateHorsepower()
+            calculatePower()
         } else {
             document.querySelector(".power-unit").innerHTML = " KWH"
             document.querySelector(".power-unit").title = "Kilowatt Hour; Formula: (FlowRate * Total Head) / (75 * Efficiency)"
@@ -177,16 +186,16 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelector(".flowrate-unit").title = "Cubic meter per hour or Liter per second"
             document.querySelector(".totalHead-unit").innerHTML = "m"
             document.querySelector(".totalHead-unit").title = "Meter"
-            calculateHorsepower()
+            calculatePower()
         }
     }
 
     radios.forEach(function (radioButton) {
         radioButton.addEventListener("change", updateUnits)
-        
+
     })
 
     updateUnits()
-    
+
 })
 

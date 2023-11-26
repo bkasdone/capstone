@@ -4,7 +4,6 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .models import *
-from django.db.models import Sum
 # Create your views here.
 
 def index(request):
@@ -62,6 +61,42 @@ def newProj(request, title):
                 "projects": projects,
                 "phases": phases,
             })
+    
+    elif request.method == "POST" and title == "Submersible Pump":
+        user = request.user
+        projectName = request.POST["projectSelect"]
+        system = request.POST["system"]
+        power = request.POST["power"]
+        flowRate = request.POST["flowRateHidden"]
+        totalHead = request.POST["totalHeadHidden"]
+        efficiency = request.POST["efficiencyHidden"]
+        phaseInput = request.POST["phase"]
+        quantity = request.POST["quantity"]
+        price = request.POST["price"]
+        
+        project = Project.objects.get(proj_name=projectName)
+        phase = Phase.objects.get(phase=phaseInput)
+        
+        newPump = Pump(
+        user=user,
+        project=project,
+        system=system,
+        power=power,
+        flowrate=flowRate,  
+        height=totalHead,   
+        efficiency=efficiency,
+        ph=phase,           
+        quantity=quantity,
+        price=price,
+    )
+
+        newPump.save()
+        projects = Project.objects.all()
+        
+        return render(request, "engineering/index.html", {
+            "projects": projects,
+        })
+        
         
 
 def login_view(request):

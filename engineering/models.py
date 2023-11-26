@@ -20,6 +20,8 @@ class Project(models.Model):
 class Pump(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    system = models.CharField(max_length=50, blank=True, null=True)
+    power = models.DecimalField(decimal_places=2, max_digits=5, blank=True, null=True)
     ph = models.ForeignKey(Phase, on_delete=models.CASCADE)
     flowrate = models.DecimalField(max_digits=9, decimal_places=2)
     height = models.DecimalField(max_digits=9, decimal_places=2)
