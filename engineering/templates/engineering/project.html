@@ -5,6 +5,7 @@
     <div class='container'>
         <div class="row justify-content-between mt-3 ml-1">
             <h1><strong>{{ projectName }}</strong></h1>
+            <input type="hidden" value="{{projectName.id}}" id="projectname">
             <div class="column mt-2 mr-3">
                 <button class="btn btn-primary" onclick="addRow()">Add Row</button>
                 <button class="btn btn-success" onclick="undoDelete()">Undo</button>
@@ -62,6 +63,8 @@
             </tfoot>
         </table>
         {% endif %}
+
+        <button class="btn btn-primary" id="saveTable">SAVE</button>
     </div>
 
 {% endblock %}

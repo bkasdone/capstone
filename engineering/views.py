@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
+import json
+from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -19,7 +22,6 @@ def index(request):
         new_project = Project(proj_name=title)
         new_project.save()
         return HttpResponseRedirect(reverse('project', args=[new_project.id]))
-    
     
 def project(request, id):
     if request.method == "GET":
@@ -96,8 +98,28 @@ def newProj(request, title):
         return render(request, "engineering/index.html", {
             "projects": projects,
         })
-        
-        
+
+@csrf_exempt
+def save_data(request, id):
+    if request.method == 'POST':
+        try:
+            json_data = json.loads(request.body)
+            project_name = Project.objects.get(id=id)
+            
+            for item in json_data:
+                project_detail = ProjectDetails(
+                    proj_name=project_name,
+                    description=item['description'],
+                    quantity=item['quantity'],
+                    price=item['price']
+                )
+                project_detail.save()
+
+            return JsonResponse({'success': True})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 def login_view(request):
     if request.method == "POST":
