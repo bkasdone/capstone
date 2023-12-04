@@ -1,10 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from .models import *
 from django.db.models import Max
@@ -31,6 +30,7 @@ def project(request, id):
 
         # Filter ProjectDetails with the given project id and highest version
         projDetails = ProjectDetails.objects.filter(proj_name=id, version=max_version)
+        versions = ProjectDetails.objects.values("version").distinct().order_by("-version")
 
         total_amount_sum = 0
 
@@ -43,6 +43,7 @@ def project(request, id):
         "projectName":projectName,
         "total_amount_sum": total_amount_sum,
         "version": max_version,
+        "versions": versions
     })
 
 def newProj(request, title):
@@ -120,6 +121,7 @@ def save_data(request, id):
 
                 project_detail = ProjectDetails(
                     version=version,
+                    name = request.user,
                     proj_name=project_name,
                     description=item['description'],
                     quantity=item['quantity'],

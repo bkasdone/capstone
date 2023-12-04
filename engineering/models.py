@@ -35,6 +35,7 @@ class Pump(models.Model):
     
 class ProjectDetails(models.Model):
     proj_name = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project")
+    name = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
     version = models.IntegerField(blank=True, null=True)
     description = models.CharField(max_length=300)
     quantity = models.IntegerField()
