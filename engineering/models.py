@@ -35,6 +35,7 @@ class Pump(models.Model):
     
 class ProjectDetails(models.Model):
     proj_name = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project")
+    version = models.IntegerField(blank=True, null=True)
     description = models.CharField(max_length=300)
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=9, decimal_places=2)

@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from .models import *
+from django.db.models import Max
 # Create your views here.
 
 def index(request):
@@ -26,7 +27,10 @@ def index(request):
 def project(request, id):
     if request.method == "GET":
         projectName = Project.objects.get(pk=id)
-        projDetails = ProjectDetails.objects.filter(proj_name=id)
+        max_version = ProjectDetails.objects.filter(proj_name=id).aggregate(Max('version'))['version__max']
+
+        # Filter ProjectDetails with the given project id and highest version
+        projDetails = ProjectDetails.objects.filter(proj_name=id, version=max_version)
 
         total_amount_sum = 0
 
@@ -38,6 +42,7 @@ def project(request, id):
         "projDetails":projDetails,
         "projectName":projectName,
         "total_amount_sum": total_amount_sum,
+        "version": max_version,
     })
 
 def newProj(request, title):
@@ -106,8 +111,15 @@ def save_data(request, id):
             json_data = json.loads(request.body)
             project_name = Project.objects.get(id=id)
             
+            # Find the maximum version for the given project
+            max_version = ProjectDetails.objects.filter(proj_name=project_name).aggregate(Max('version'))['version__max']
+
             for item in json_data:
+                # Increment the version for each new detail
+                version = max_version + 1 if max_version is not None else 1
+
                 project_detail = ProjectDetails(
+                    version=version,
                     proj_name=project_name,
                     description=item['description'],
                     quantity=item['quantity'],
@@ -120,6 +132,7 @@ def save_data(request, id):
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
+
 
 def login_view(request):
     if request.method == "POST":
