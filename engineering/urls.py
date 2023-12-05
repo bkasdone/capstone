@@ -1,5 +1,4 @@
 from django.urls import path
-
 from . import views
 
 urlpatterns = [
@@ -10,4 +9,5 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("newProj/<str:title>", views.newProj, name="newProj"),
     path('api/save_data/<int:id>', views.save_data, name='save_data'),
+    path('get_data/<int:id>/<int:version>/', views.get_data, name='get_data'),
 ]

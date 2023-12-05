@@ -42,4 +42,4 @@ class ProjectDetails(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2)
     
     def __str__(self):
-        return f"{self.proj_name}"
+        return f"{self.proj_name}, version:{self.version} by:{self.name}"

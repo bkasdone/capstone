@@ -256,3 +256,44 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 })
+document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById('versionDropdown').addEventListener('change', function () {
+        var projectId = document.getElementById('projectname').value;
+        var version = document.getElementById('versionDropdown').value;
+
+        fetch(`/get_data/${projectId}/${version}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data.projDetails);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    });
+
+    function updateTable(projDetails) {
+        var tableBody = document.getElementById('projectTable').getElementsByTagName('tbody')[0];
+
+        // Clear existing rows
+        tableBody.innerHTML = '';
+
+        // Iterate through projDetails and append rows to the table
+        projDetails.forEach((detail, index) => {
+            var newRow = `
+            <tr>
+                <td>${index + 1}</td>
+                <td><div contenteditable="true">${detail.description}</div></td>
+                <td><div contenteditable="true" oninput="updateRowTotal(this)">${detail.quantity}</div></td>
+                <td><div contenteditable="true" oninput="updateRowTotal(this)">${detail.price}</div></td>
+                <td><div contenteditable="false">${parseFloat(detail.totalAmount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div></td>
+                <td><span onclick="deleteRow(this)" class="delete-icon">&#10060;</span></td>
+            </tr>`;
+
+            tableBody.insertAdjacentHTML('beforeend', newRow);
+            updateTotalAmount()
+        });
+
+    }
+
+
+})

@@ -11,7 +11,7 @@ from django.db.models import Max
 
 def index(request):
     if request.method == 'GET':
-        projects = Project.objects.all()
+        projects = Project.objects.all().order_by("proj_name")
         return render(request, "engineering/index.html", {
             "projects": projects,
 
@@ -135,6 +135,26 @@ def save_data(request, id):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+
+def get_data(request, id, version):
+    if request.method == "GET":
+        # Assuming you have a valid Project object with the given id
+        # You may need to adapt this part based on your project structure
+        project_details = ProjectDetails.objects.filter(proj_name=id, version=version)
+
+        # Convert project details to a list of dictionaries
+        proj_details_list = []
+        for detail in project_details:
+            proj_details_list.append({
+                'description': detail.description,
+                'quantity': detail.quantity,
+                'price': float(detail.price),
+                'totalAmount': float(detail.quantity * detail.price),
+            })
+
+        return JsonResponse({'projDetails': proj_details_list})
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 def login_view(request):
     if request.method == "POST":

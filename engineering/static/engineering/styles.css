@@ -44,3 +44,8 @@ u {
     text-decoration: none;
     cursor: pointer;
 }
+
+.proj_modal {
+    width: 100%;
+
+}

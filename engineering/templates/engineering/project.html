@@ -6,16 +6,13 @@
         <div class="row justify-content-between mt-3 ml-1">
             <h1><strong>{{ projectName }}</strong></h1>
             <input type="hidden" value="{{projectName.id}}" id="projectname">
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Version History
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <select class="custom-select" id="versionDropdown">
+                <option selected>Select Version</option>
                 {% for ver in versions %}
-                    <a class="dropdown-item" href="#">{{ ver.version }}</a>
-                {% endfor%}
-                </div>
-            </div>
+                    <option value="{{ ver.version }}">{{ ver.version }}</option>
+                {% endfor %}
+            </select>
+            
         </div>
             <div class="column text-right my-2 mr-3">
                 <button class="btn btn-primary" onclick="addRow()">Add Row</button>
