@@ -3,7 +3,7 @@
 
 {% block body %}
     <div class='container'>
-        <div id="saveMessage"></div>
+        <div class="alert alert-success" id="saveMessage" role="alert" hidden></div>
         <div class="row justify-content-between mt-3 ml-1">
             <h1><strong>{{ projectName }}</strong></h1>
             <input type="hidden" value="{{projectName.id}}" id="projectname">

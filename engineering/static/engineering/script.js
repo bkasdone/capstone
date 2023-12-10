@@ -1,3 +1,25 @@
+//For adding and deleting rows in a Project
+document.addEventListener('DOMContentLoaded', function (e) {
+    e.preventDefault(); // Disable right-click context menu
+})
+
+function validateFormSubPump() {
+    // Validate other fields as needed
+    var flowRate = document.getElementById("flowRate").value;
+    var totalHead = document.getElementById("totalHead").value;
+    var efficiency = document.getElementById("efficiency").value;
+    var phase = document.getElementsByName("phase")[0].value;
+    var quantity = document.getElementsByName("quantity")[0].value;
+    var price = document.getElementsByName("price")[0].value;
+
+    if (flowRate === "" || totalHead === "" || efficiency === "" || phase === "--Select Power System--" || quantity === "" || price === "") {
+        alert("Please fill in all fields");
+        return false;
+    }
+
+    return true;
+}
+
 let deletedRows = []
 
 function addRow() {
@@ -196,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const cells = row.querySelectorAll('td');
             rowData.description = cells[1].querySelector('div').innerText;
             rowData.quantity = parseInt(cells[2].querySelector('div').innerText, 10);
-            rowData.price = parseInt(cells[3].querySelector('div').innerText, 10);
+            rowData.price = parseFloat(cells[3].querySelector('div').innerText, 10);
             tableData.push(rowData);
         });
 
@@ -216,13 +238,15 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(data => {
                 console.log('Success:', data);
-                window.location.href = `/project/${projectId}`;
                 const saveMessage = document.getElementById('saveMessage');
                 saveMessage.textContent = 'Project Saved';
-                setTimeout(() => {
-                    saveMessage.textContent = '';
-                }, 5000);
+                saveMessage.classList.add('alert-success'); // Add a class for styling (optional)
+                saveMessage.hidden = false; // Show the alert
 
+                setTimeout(() => {
+                    saveMessage.hidden = true; // Hide the alert after 5 seconds
+                    window.location.href = `/project/${projectId}`;
+                }, 5000);
             })
             .catch(error => {
                 console.error('Error:', error);

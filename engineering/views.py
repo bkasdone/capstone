@@ -150,7 +150,7 @@ def get_data(request, id, version):
                 'description': detail.description,
                 'quantity': detail.quantity,
                 'price': float(detail.price),
-                'totalAmount': float(detail.quantity * detail.price),
+                'totalAmount': float(detail.quantity * float(detail.price)),
             })
 
         return JsonResponse({'projDetails': proj_details_list})

@@ -23,11 +23,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
                     </li>
-                {% endif %}
                 <li class="nav-item">
                   <a class="nav-link" href="{% url 'index' %}">All Projects</a>
                 </li>
-                {% if user.is_authenticated %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Design Project
@@ -55,8 +53,26 @@
           </nav>
         
         <div class="body">
+          {% if user.is_authenticated %}
             {% block body %}
             {% endblock %}
+          {% else %}
+          <div class='container'>
+            <h2>Login</h2>
+                    <form action="{% url 'login' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input autofocus class="form-control" type="text" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="password" name="password" placeholder="Password">
+                        </div>
+                        <input class="btn btn-primary" type="submit" value="Login">
+                    </form>
+
+                    Don't have an account? <a href="{% url 'register' %}">Register here.</a>
+            </div>
+          {% endif %}
         </div>
 
         

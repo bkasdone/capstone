@@ -1,17 +1,18 @@
 {% extends "engineering/layout.html" %}
+{% load static %}
 
 {% block body %}
     <div class='container'>
         
-        <form action="{% url "newProj" title=title %}" method="POST">
+        <form action="{% url "newProj" title=title %}" method="POST" onsubmit="return validateFormSubPump()">
             {% csrf_token %}
             <h2>Create New {{ title }}</h2>
             <label>Select Project: </label>
             {% if title == "Submersible Pump" %}
             <select class="form-select" aria-label="Default select example" id="projectSelect" name="projectSelect">
-                <option selected>Projects</option>
+                <option selected disabled>Select a Project</option>
                 {% for project in projects %}
-                <option value="{{ project.proj_name }}">{{ project.proj_name }}</option>
+                    <option value="{{ project.proj_name }}">{{ project.proj_name }}</option>
                 {% endfor %}
             </select><br>
             <img src="/static/engineering/{{title}}.png" alt="pump" class="image"><br>
@@ -61,9 +62,12 @@
             <label>Price: </label>
             <input type="number" name="price"><br>
 
-            <button class="btn btn-primary">SAVE</button>
+            <button class="btn btn-primary">SUBMIT</button>
         </form>
         {% endif %}
     </div>
 
+{% block script %}
+    <script src="{% static 'engineering/script.js' %}"></script>
+{% endblock %}
 {% endblock %}
