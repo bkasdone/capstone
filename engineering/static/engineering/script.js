@@ -22,7 +22,7 @@ function addRow() {
         } else if (i === 5) {
             cell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>'
         } else {
-            let placeholderText = i === 1 ? 'Description' : (i === 2 ? 'Quantity' : (i === 3 ? 'Price' : 'Total Amount'))
+            let placeholderText = i === 1 ? 'Description' : (i === 2 ? '0' : (i === 3 ? '0' : 'Total Amount'))
             cell.innerHTML = '<div contenteditable="' + (i === 4 ? 'false' : 'true') + '" oninput="updateRowTotal(this)">' + placeholderText + '</div>'
         }
     }
@@ -90,6 +90,7 @@ function updateTotalAmount(row) {
         totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         updateTotalAmount()
     }
+
 }
 
 // Update the total below the table
@@ -108,6 +109,9 @@ function updateTotalAmount() {
 
         if (!isNaN(quantity) && !isNaN(price)) {
             totalAmount += quantity * price
+        }
+        else {
+            totalAmount = 0
         }
     }
 
@@ -201,10 +205,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 })
 
-// Assuming you have a button with the id 'saveTable'
+
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('saveTable').addEventListener('click', function () {
-        // Select data from the HTML table (modify this according to your table structure)
         const tableData = [];
         const rows = document.querySelectorAll('table tbody tr');
         rows.forEach(row => {
@@ -213,49 +216,58 @@ document.addEventListener("DOMContentLoaded", function () {
             rowData.description = cells[1].querySelector('div').innerText;
             rowData.quantity = parseInt(cells[2].querySelector('div').innerText, 10);
             rowData.price = parseInt(cells[3].querySelector('div').innerText, 10);
-            // Add more fields as needed
             tableData.push(rowData);
         });
 
-        // Send the data to the Django API endpoint
+
         const projectId = document.querySelector("#projectname").value;
-        console.log(projectId);  // Check the value in the console
+        console.log(projectId);
         fetch(`/api/save_data/${projectId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken'), // Include the CSRF token
+                'X-CSRFToken': getCookie('csrftoken'),
             },
             body: JSON.stringify(tableData),
         })
-            .then(response => response.json())
+            .then(response => {
+                return response.json();
+            })
             .then(data => {
                 console.log('Success:', data);
+                window.location.href = `/project/${projectId}`;
+                const saveMessage = document.getElementById('saveMessage');
+                saveMessage.textContent = 'Project Saved';
+                setTimeout(() => {
+                    saveMessage.textContent = '';
+                }, 5000);
+
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error('Error:', error);
             });
-    });
 
 
-    // Helper function to get CSRF token from cookies
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                // Check if this cookie name is the one we want
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
+        // Helper function to get CSRF token from cookies
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Check if this cookie name is the one we want
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
             }
+            return cookieValue;
         }
-        return cookieValue;
-    }
 
+    })
 })
+
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('versionDropdown').addEventListener('change', function () {
         var projectId = document.getElementById('projectname').value;

@@ -3,13 +3,14 @@
 
 {% block body %}
     <div class='container'>
+        <div id="saveMessage"></div>
         <div class="row justify-content-between mt-3 ml-1">
             <h1><strong>{{ projectName }}</strong></h1>
             <input type="hidden" value="{{projectName.id}}" id="projectname">
             <select class="custom-select" id="versionDropdown">
-                <option selected>Select Version</option>
+                <option selected>Version History</option>
                 {% for ver in versions %}
-                    <option value="{{ ver.version }}">{{ ver.version }}</option>
+                    <option value="{{ ver.version }}">version: {{ ver.version }} edited by: {{ ver.editor }}</option>
                 {% endfor %}
             </select>
             
@@ -57,9 +58,9 @@
                 <tr>
                     <td>1</td>
                     <td><div contenteditable="true">Description</div></td>
-                    <td><div contenteditable="true" oninput="updateRowTotal(this)">Quantity</div></td>
-                    <td><div contenteditable="true" oninput="updateRowTotal(this)">Price</div></td>
-                    <td><div contenteditable="false"></div></td>
+                    <td><div contenteditable="true" oninput="updateRowTotal(this)">0</div></td>
+                    <td><div contenteditable="true" oninput="updateRowTotal(this)">0</div></td>
+                    <td><div contenteditable="false">Total Amount</div></td>
                     <td><span onclick="deleteRow(this)" class="delete-icon">&#10060;</span></td>
                 </tr>
             </tbody>

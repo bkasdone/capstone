@@ -15,8 +15,25 @@ class Project(models.Model):
     
     def __str__(self):
         return f'{self.proj_name}'
+    
+class Version(models.Model):
+    proj_id = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project_id")
+    version = models.IntegerField()
+    editor = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f'version:{self.version}'
+    
+    
+class ProjectDetails(models.Model):
+    ver = models.ForeignKey(Version, on_delete=models.CASCADE, related_name="vers_details")
+    description = models.CharField(max_length=300)
+    quantity = models.IntegerField()
+    price = models.DecimalField(max_digits=9, decimal_places=2)
+    
+    def __str__(self):
+        return f"Project:{self.ver.proj_id.proj_name} v.{self.ver.version} edited by:{self.ver.editor}"
 
-# Create your models here.
 class Pump(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
@@ -33,13 +50,3 @@ class Pump(models.Model):
         return f"by {self.user}, Project: {self.project}"
     
     
-class ProjectDetails(models.Model):
-    proj_name = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="project")
-    name = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
-    version = models.IntegerField(blank=True, null=True)
-    description = models.CharField(max_length=300)
-    quantity = models.IntegerField()
-    price = models.DecimalField(max_digits=9, decimal_places=2)
-    
-    def __str__(self):
-        return f"{self.proj_name}, version:{self.version} by:{self.name}"

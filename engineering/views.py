@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 import json
 from django.views.decorators.csrf import csrf_exempt
@@ -21,31 +21,34 @@ def index(request):
         title = request.POST["proj_title"]
         new_project = Project(proj_name=title)
         new_project.save()
-        return HttpResponseRedirect(reverse('project', args=[new_project.id]))
+        new_version = Version(proj_id=new_project, version=0, editor=request.user)
+        new_version.save()
+        return redirect("index")
+
     
 def project(request, id):
     if request.method == "GET":
-        projectName = Project.objects.get(pk=id)
-        max_version = ProjectDetails.objects.filter(proj_name=id).aggregate(Max('version'))['version__max']
+        projectName = get_object_or_404(Project, pk=id)
+        
+        # Get the latest version for the given project id
+        latest_version = Version.objects.filter(proj_id=id).order_by('-version').first()
 
         # Filter ProjectDetails with the given project id and highest version
-        projDetails = ProjectDetails.objects.filter(proj_name=id, version=max_version)
-        versions = ProjectDetails.objects.values("version").distinct().order_by("-version")
-
+        projDetails = ProjectDetails.objects.filter(ver=latest_version)
+        versions = Version.objects.filter(proj_id=id).order_by('-version')
         total_amount_sum = 0
 
         for detail in projDetails:
             detail.total_price = detail.price * detail.quantity
-            total_amount_sum += detail.total_price
+            total_amount_sum += detail.total_price 
 
-    return render(request, "engineering/project.html", {
-        "projDetails":projDetails,
-        "projectName":projectName,
-        "total_amount_sum": total_amount_sum,
-        "version": max_version,
-        "versions": versions
-    })
-
+        return render(request, "engineering/project.html", {
+            "projDetails": projDetails,
+            "projectName": projectName,
+            "total_amount_sum": total_amount_sum,
+            "version": latest_version,
+            "versions": versions,
+        })
 def newProj(request, title):
     if request.method == "GET":
         projects = Project.objects.all()
@@ -105,24 +108,21 @@ def newProj(request, title):
             "projects": projects,
         })
 
-@csrf_exempt
+
 def save_data(request, id):
     if request.method == 'POST':
         try:
             json_data = json.loads(request.body)
-            project_name = Project.objects.get(id=id)
-            
-            # Find the maximum version for the given project
-            max_version = ProjectDetails.objects.filter(proj_name=project_name).aggregate(Max('version'))['version__max']
+            project = get_object_or_404(Project, id=id)
+            latest_version = Version.objects.filter(proj_id=project).order_by('-version').first()
+            new_version_number = latest_version.version + 1 if latest_version else 1
+
+            new_version = Version(proj_id=project, version=new_version_number, editor=request.user)
+            new_version.save()
 
             for item in json_data:
-                # Increment the version for each new detail
-                version = max_version + 1 if max_version is not None else 1
-
                 project_detail = ProjectDetails(
-                    version=version,
-                    name = request.user,
-                    proj_name=project_name,
+                    ver=new_version,
                     description=item['description'],
                     quantity=item['quantity'],
                     price=item['price']
@@ -140,7 +140,8 @@ def get_data(request, id, version):
     if request.method == "GET":
         # Assuming you have a valid Project object with the given id
         # You may need to adapt this part based on your project structure
-        project_details = ProjectDetails.objects.filter(proj_name=id, version=version)
+        project_version = Version.objects.get(proj_id=id, version=version)
+        project_details = ProjectDetails.objects.filter(ver=project_version)
 
         # Convert project details to a list of dictionaries
         proj_details_list = []
