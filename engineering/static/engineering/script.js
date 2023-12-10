@@ -1,8 +1,3 @@
-//For adding and deleting rows in a Project
-document.addEventListener('contextmenu', function (e) {
-    e.preventDefault(); // Disable right-click context menu
-})
-
 let deletedRows = []
 
 function addRow() {
@@ -26,7 +21,7 @@ function addRow() {
             cell.innerHTML = '<div contenteditable="' + (i === 4 ? 'false' : 'true') + '" oninput="updateRowTotal(this)">' + placeholderText + '</div>'
         }
     }
-
+    updateTotalAmount()
 }
 
 function deleteRow(button) {
@@ -63,34 +58,23 @@ function undoDelete() {
 }
 
 // Update the total amount in the table
+// Update the total amount in the table
 function updateRowTotal(input) {
     let row = input.parentNode.parentNode;
     let quantity = parseFloat(row.cells[2].getElementsByTagName('div')[0].innerText) || parseFloat(row.cells[2].getElementsByTagName('div')[0].textContent)
     let price = parseFloat(row.cells[3].getElementsByTagName('div')[0].innerText) || parseFloat(row.cells[3].getElementsByTagName('div')[0].textContent)
     let totalAmountCell = row.cells[4].getElementsByTagName('div')[0]
 
-    if (!isNaN(quantity) && !isNaN(price)) {
-        let totalAmount = quantity * price
-        totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        updateTotalAmount()
-    }
+    updateTotalAmountForRow(row, quantity, price, totalAmountCell);
 }
 
 // Update the total in the table
-function updateTotalAmount(row) {
-    let quantityCell = row.cells[2].getElementsByTagName('div')[0]
-    let priceCell = row.cells[3].getElementsByTagName('div')[0]
-    let totalAmountCell = row.cells[4].getElementsByTagName('div')[0]
-
-    let quantity = parseFloat(quantityCell.innerText) || parseFloat(quantityCell.textContent)
-    let price = parseFloat(priceCell.innerText) || parseFloat(priceCell.textContent)
-
+function updateTotalAmountForRow(row, quantity, price, totalAmountCell) {
     if (!isNaN(quantity) && !isNaN(price)) {
         let totalAmount = quantity * price
         totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        updateTotalAmount()
+        updateTotalAmount();
     }
-
 }
 
 // Update the total below the table
@@ -110,12 +94,9 @@ function updateTotalAmount() {
         if (!isNaN(quantity) && !isNaN(price)) {
             totalAmount += quantity * price
         }
-        else {
-            totalAmount = 0
-        }
-    }
 
-    totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        totalAmountCell.innerText = totalAmount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    }
 }
 
 // Pump Power Consumption Computation
