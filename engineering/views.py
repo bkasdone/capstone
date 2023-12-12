@@ -41,6 +41,8 @@ def project(request, id):
         for detail in projDetails:
             detail.total_price = detail.price * detail.quantity
             total_amount_sum += detail.total_price 
+            
+        designDetails = Pump.objects.filter(project=id)
 
         return render(request, "engineering/project.html", {
             "projDetails": projDetails,
@@ -48,6 +50,7 @@ def project(request, id):
             "total_amount_sum": total_amount_sum,
             "version": latest_version,
             "versions": versions,
+            "designDetails": designDetails,
         })
 def newProj(request, title):
     if request.method == "GET":
@@ -156,6 +159,18 @@ def get_data(request, id, version):
         return JsonResponse({'projDetails': proj_details_list})
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+def designData(request, id, pumpID):
+    if request.method == "GET":
+        # Assuming you want to get all Pump objects related to the project
+        pumpDetails = Pump.objects.filter(project=id)
+        
+        # Serialize the data to JSON
+        serialized_data = [{'system': pump.system, 'ph': pump.ph, 'power': pump.power,
+                            'quantity': pump.quantity, 'price': pump.price} for pump in pumpDetails]
+
+        # Return the serialized data as JSON response
+        return JsonResponse({'pumpDetails': serialized_data})
 
 def login_view(request):
     if request.method == "POST":

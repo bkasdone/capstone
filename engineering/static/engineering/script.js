@@ -309,8 +309,45 @@ document.addEventListener("DOMContentLoaded", function () {
             tableBody.insertAdjacentHTML('beforeend', newRow);
             updateTotalAmount()
         });
-
     }
 
+    function updateTable(data) {
+        // Clear existing rows from the table
+        var table = document.getElementById("projectTable").getElementsByTagName('tbody')[0];
+        table.innerHTML = '';
 
+        // Iterate through the data and update the table
+        for (let i = 0; i < data.length; i++) {
+            let newRow = table.insertRow(table.rows.length);
+            let rowNum = table.rows.length;
+
+            // Update the cell values based on the data
+            newRow.cells[0].innerHTML = rowNum;
+            newRow.cells[1].innerHTML = '<div contenteditable="true">' + data[i].system + '</div>';
+            newRow.cells[2].innerHTML = '<div contenteditable="true" oninput="updateRowTotal(this)">' + data[i].quantity + '</div>';
+            newRow.cells[3].innerHTML = '<div contenteditable="true" oninput="updateRowTotal(this)">' + data[i].price + '</div>';
+            newRow.cells[4].innerHTML = '<div contenteditable="false">' + 'Total Amount' + '</div>';
+            newRow.cells[5].innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>';
+
+            // Update the total amount
+            updateTotalAmount();
+        }
+    }
+
+    // Function to handle the import button click
+    document.getElementById('import-design').addEventListener('click', function () {
+        var projectId = document.getElementById('projectname').value;
+        var pumpID = document.getElementById('importDropdown').value;
+
+        fetch(`/design_data/${projectId}/${pumpID}`)
+            .then(response => response.json())
+            .then(data => {
+                updateTable(data.pumpDetails);
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+        $('#importModal').modal('hide'); // Use Bootstrap's modal function to close the modal
+    });
 })

@@ -10,4 +10,5 @@ urlpatterns = [
     path("newProj/<str:title>", views.newProj, name="newProj"),
     path('api/save_data/<int:id>', views.save_data, name='save_data'),
     path('get_data/<int:id>/<int:version>/', views.get_data, name='get_data'),
+    path('design_data/<int:id>/<int:pumpID>/', views.designData, name='designData'),
 ]

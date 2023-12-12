@@ -1,5 +1,6 @@
 {% extends "engineering/layout.html" %}
 {% load humanize %}
+{% load static %}
 
 {% block body %}
     <div class='container'>
@@ -16,11 +17,16 @@
             
         </div>
             <div class="column text-right my-2 mr-3">
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importModal" >
+                    Import
+                  </button>
                 <button class="btn btn-primary" onclick="addRow()">Add Row</button>
                 <button class="btn btn-success" onclick="undoDelete()">Undo</button>
             </div>
-        
-        
+            
+
+            
+
         <table class="table" id="projectTable">
             <thead class="thead-dark">
             <tr>
@@ -76,4 +82,28 @@
         <button class="btn btn-primary" id="saveTable">SAVE</button>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="importModalLabel">Import Project</h1>
+            </div>
+                <div class="modal-body">
+                <select class="custom-select" id="importDropdown">
+                    <option selected>Select Design</option>
+                    {% for details in designDetails %}
+                        <option value="{{ details.id }}"> Pump {{details.id}} design by: {{ details.user }}</option>
+                    {% endfor %}
+                </select>
+                </div>
+                <div class="modal-footer">
+            <div class="modal-footer">
+                <button type="submit" id="import-design" class="btn btn-primary">Import</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock %}
