@@ -163,14 +163,24 @@ def get_data(request, id, version):
 def designData(request, id, pumpID):
     if request.method == "GET":
         # Assuming you want to get all Pump objects related to the project
-        pumpDetails = Pump.objects.filter(project=id)
+        pumpDetails = Pump.objects.filter(project=id, pk=pumpID)
         
-        # Serialize the data to JSON
-        serialized_data = [{'system': pump.system, 'ph': pump.ph, 'power': pump.power,
-                            'quantity': pump.quantity, 'price': pump.price} for pump in pumpDetails]
-
-        # Return the serialized data as JSON response
-        return JsonResponse({'pumpDetails': serialized_data})
+        pump_details_list = []
+        for detail in pumpDetails:
+            pump_details_list.append({
+                'user': detail.user,
+                'project': detail.project,
+                'system': detail.system,
+                'power': detail.power,
+                'ph': detail.ph,
+                'quantity': detail.quantity,
+                'price': float(detail.price),
+                'totalAmount': float(detail.quantity * float(detail.price)),
+            })
+        
+        return JsonResponse({'pumpDetails': pump_details_list})
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 def login_view(request):
     if request.method == "POST":
