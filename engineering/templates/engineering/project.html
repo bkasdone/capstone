@@ -4,7 +4,7 @@
 
 {% block body %}
     <div class='container'>
-        <div class="alert alert-success" id="saveMessage" role="alert" hidden></div>
+        
         <div class="row justify-content-between mt-3 ml-1">
             <h1><strong>{{ projectName }}</strong></h1>
             <input type="hidden" value="{{projectName.id}}" id="projectname">
@@ -65,8 +65,8 @@
                     <td>1</td>
                     <td><div contenteditable="true">Description</div></td>
                     <td><div contenteditable="true" oninput="updateRowTotal(this)">0</div></td>
-                    <td><div contenteditable="true" oninput="updateRowTotal(this)">0</div></td>
-                    <td><div contenteditable="false">Total Amount</div></td>
+                    <td><div contenteditable="true" oninput="updateRowTotal(this)">0.00</div></td>
+                    <td><div contenteditable="false">0.00</div></td>
                     <td><span onclick="deleteRow(this)" class="delete-icon">&#10060;</span></td>
                 </tr>
             </tbody>
@@ -106,4 +106,17 @@
         </div>
       </div>
     </div>
+
+    <!-- Save Message Modal -->
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog" id="saveMessage">
+          <div class="modal-content">
+            <div class="modal-body">
+                <div class="alert alert-success" role="alert">
+                    Project Saved!
+                  </div>
+            </div>
+          </div>
+        </div>
+      </div>
 {% endblock %}

@@ -39,7 +39,7 @@ function addRow() {
         } else if (i === 5) {
             cell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>'
         } else {
-            let placeholderText = i === 1 ? 'Description' : (i === 2 ? '0' : (i === 3 ? '0' : 'Total Amount'))
+            let placeholderText = i === 1 ? 'Description' : (i === 2 ? '0' : (i === 3 ? '0.00' : '0.00'))
             cell.innerHTML = '<div contenteditable="' + (i === 4 ? 'false' : 'true') + '" oninput="updateRowTotal(this)">' + placeholderText + '</div>'
         }
     }
@@ -77,6 +77,7 @@ function undoDelete() {
         let deleteCell = newRow.insertCell(lastDeleted.data.length)
         deleteCell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>'
     }
+    updateTotalAmount()
 }
 
 // Update the total amount in the table
@@ -210,7 +211,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById('saveTable').addEventListener('click', function () {
+    const saveTable= document.getElementById('saveTable')
+    if (saveTable){
+    saveTable.addEventListener('click', function () {
         const tableData = [];
         const rows = document.querySelectorAll('table tbody tr');
         rows.forEach(row => {
@@ -222,9 +225,9 @@ document.addEventListener("DOMContentLoaded", function () {
             tableData.push(rowData);
         });
 
-
         const projectId = document.querySelector("#projectname").value;
         console.log(projectId);
+        
         fetch(`/api/save_data/${projectId}`, {
             method: 'POST',
             headers: {
@@ -233,25 +236,21 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify(tableData),
         })
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                console.log('Success:', data);
-                const saveMessage = document.getElementById('saveMessage');
-                saveMessage.textContent = 'Project Saved';
-                saveMessage.classList.add('alert-success'); // Add a class for styling (optional)
-                saveMessage.hidden = false; // Show the alert
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            
+            // Updated code to use Bootstrap 5 modal
+            const saveMessageModal = new bootstrap.Modal(document.getElementById('saveMessage'));
+            alert("Project Saved")
 
-                setTimeout(() => {
-                    saveMessage.hidden = true; // Hide the alert after 5 seconds
-                    window.location.href = `/project/${projectId}`;
-                }, 5000);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-
+            setTimeout(() => {
+                window.location.href = `/project/${projectId}`;
+            }, 5000);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 
         // Helper function to get CSRF token from cookies
         function getCookie(name) {
@@ -270,11 +269,13 @@ document.addEventListener("DOMContentLoaded", function () {
             return cookieValue;
         }
 
-    })
+    })}
 })
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById('versionDropdown').addEventListener('change', function () {
+    const versionDropdown = document.getElementById('versionDropdown')
+    if (versionDropdown) {
+    versionDropdown.addEventListener('change', function () {
         var projectId = document.getElementById('projectname').value;
         var version = document.getElementById('versionDropdown').value;
 
@@ -286,7 +287,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-    });
+    })};
 
     function updateTable(projDetails) {
         var tableBody = document.getElementById('projectTable').getElementsByTagName('tbody')[0];
@@ -301,7 +302,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <td>${index + 1}</td>
                 <td><div contenteditable="true">${detail.description}</div></td>
                 <td><div contenteditable="true" oninput="updateRowTotal(this)">${detail.quantity}</div></td>
-                <td><div contenteditable="true" oninput="updateRowTotal(this)">${detail.price}</div></td>
+                <td><div contenteditable="true" oninput="updateRowTotal(this)">${parseFloat(detail.price).toFixed(2)}</div></td>
                 <td><div contenteditable="false">${parseFloat(detail.totalAmount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div></td>
                 <td><span onclick="deleteRow(this)" class="delete-icon">&#10060;</span></td>
             </tr>`;
@@ -313,20 +314,49 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // Function to handle the import button click
-    document.getElementById('import-design').addEventListener('click', function () {
+    const importDesign = document.getElementById('import-design')
+    if (importDesign) {
+    importDesign.addEventListener('click', function () {
         var projectId = document.getElementById('projectname').value;
         var pumpID = document.getElementById('importDropdown').value;
 
         fetch(`/designData/${projectId}/${pumpID}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
-    
+                importRow(data)
                 $('#importModal').modal('hide'); // Close the modal after updating the table
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
                 // Handle error (e.g., show an alert to the user)
             });
-    });
+    });}
+
+    function importRow(data) {
+        let table = document.getElementById("projectTable").getElementsByTagName('tbody')[0]
+        let newRow = table.insertRow(table.rows.length)
+        let rowNum = table.rows.length
+
+        for (let i = 1; i < newRow.cells.length - 1; i++) {
+            let cell = newRow.cells[i].getElementsByTagName('div')[0]
+            cell.contentEditable = 'true'
+        }
+    
+        for (let i = 0; i < 6; i++) {
+            let cell = newRow.insertCell(i)
+            if (i === 0) {
+                cell.innerHTML = rowNum
+            } else if (i === 5) {
+                cell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>'
+            } else {
+                data[0].system === 'english'? unit='hp' : unit='KWH'
+                let placeholderText = i === 1 ? `
+                <span>Submersible Pump,</span><br>
+                <span>${data[0].ph},</span><br>
+                <span>${data[0].power} ${unit},</span>` : (i === 2 ? `${data[0].quantity}` : (i === 3 ? `${(data[0].price).toFixed(2)}` : `${(parseFloat(data[0].price)*parseFloat(data[0].quantity)).toFixed(2)}`))
+                cell.innerHTML = '<div contenteditable="' + (i === 4 ? 'false' : 'true') + '" oninput="updateRowTotal(this)">' + placeholderText + '</div>'
+            }
+        }
+        updateTotalAmount()
+    }
 })
