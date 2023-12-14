@@ -281,7 +281,6 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch(`/get_data/${projectId}/${version}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
                 updateTable(data.projDetails);
             })
             .catch(error => {
@@ -318,11 +317,11 @@ document.addEventListener("DOMContentLoaded", function () {
         var projectId = document.getElementById('projectname').value;
         var pumpID = document.getElementById('importDropdown').value;
 
-        fetch(`/design_data/${projectId}/${pumpID}`)
+        fetch(`/designData/${projectId}/${pumpID}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data)
-                updateTable(data.pumpDetails);
+    
                 $('#importModal').modal('hide'); // Close the modal after updating the table
             })
             .catch(error => {

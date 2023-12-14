@@ -49,4 +49,14 @@ class Pump(models.Model):
     def __str__(self):
         return f"by {self.user}, Project: {self.project}"
     
+    def serialize(self):
+        return {
+            "user":self.user.username,
+            "project":self.project.proj_name,
+            "system":self.system,
+            "power": float(self.power),
+            "ph":self.ph.phase,
+            "quantity":self.quantity,
+            "price": float(self.price),
+        }
     

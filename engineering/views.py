@@ -160,27 +160,18 @@ def get_data(request, id, version):
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=400)
 
-def designData(request, id, pumpID):
-    if request.method == "GET":
-        # Assuming you want to get all Pump objects related to the project
-        pumpDetails = Pump.objects.filter(project=id, pk=pumpID)
-        
-        pump_details_list = []
-        for detail in pumpDetails:
-            pump_details_list.append({
-                'user': detail.user,
-                'project': detail.project,
-                'system': detail.system,
-                'power': detail.power,
-                'ph': detail.ph,
-                'quantity': detail.quantity,
-                'price': float(detail.price),
-                'totalAmount': float(detail.quantity * float(detail.price)),
-            })
-        
-        return JsonResponse({'pumpDetails': pump_details_list})
+
+@csrf_exempt
+def designData(request, projectId, pumpID):
+    if request.method == 'GET':
+        try:
+            pumpDetails = Pump.objects.filter(project=projectId, pk=pumpID)
+            return JsonResponse([detail.serialize() for detail in pumpDetails], safe=False)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=400)
+
 
 def login_view(request):
     if request.method == "POST":
