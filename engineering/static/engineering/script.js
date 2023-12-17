@@ -211,83 +211,87 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    const saveTable= document.getElementById('saveTable')
-    if (saveTable){
-    saveTable.addEventListener('click', function () {
-        const tableData = [];
-        const rows = document.querySelectorAll('table tbody tr');
-        rows.forEach(row => {
-            const rowData = {};
-            const cells = row.querySelectorAll('td');
-            rowData.description = cells[1].querySelector('div').innerText;
-            rowData.quantity = parseInt(cells[2].querySelector('div').innerText, 10);
-            rowData.price = parseFloat(cells[3].querySelector('div').innerText, 10);
-            tableData.push(rowData);
-        });
+    const saveTable = document.getElementById('saveTable')
+    if (saveTable) {
+        saveTable.addEventListener('click', function () {
+            const tableData = [];
+            const rows = document.querySelectorAll('table tbody tr');
+            rows.forEach(row => {
+                const rowData = {};
+                const cells = row.querySelectorAll('td');
+                rowData.description = cells[1].querySelector('div').innerText;
+                rowData.quantity = parseInt(cells[2].querySelector('div').innerText, 10);
+                rowData.price = parseFloat(cells[3].querySelector('div').innerText, 10);
+                tableData.push(rowData);
+            });
 
-        const projectId = document.querySelector("#projectname").value;
-        console.log(projectId);
-        
-        fetch(`/api/save_data/${projectId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken'),
-            },
-            body: JSON.stringify(tableData),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            
-            // Updated code to use Bootstrap 5 modal
-            const saveMessageModal = new bootstrap.Modal(document.getElementById('saveMessage'));
-            alert("Project Saved")
+            const projectId = document.querySelector("#projectname").value;
+            console.log(projectId);
 
-            setTimeout(() => {
-                window.location.href = `/project/${projectId}`;
-            }, 5000);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            fetch(`/api/save_data/${projectId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify(tableData),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
 
-        // Helper function to get CSRF token from cookies
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    // Check if this cookie name is the one we want
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
+                    // Updated code to use Bootstrap 5 modal
+                    const saveMessageModal = new bootstrap.Modal(document.getElementById('saveMessage'));
+                    alert("Project Saved")
+
+                    setTimeout(() => {
+                        window.location.href = `/project/${projectId}`;
+                    }, 5000);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+
+            // Helper function to get CSRF token from cookies
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Check if this cookie name is the one we want
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
                     }
                 }
+                return cookieValue;
             }
-            return cookieValue;
-        }
 
-    })}
+        })
+    }
 })
 
 document.addEventListener("DOMContentLoaded", function () {
     const versionDropdown = document.getElementById('versionDropdown')
     if (versionDropdown) {
-    versionDropdown.addEventListener('change', function () {
-        var projectId = document.getElementById('projectname').value;
-        var version = document.getElementById('versionDropdown').value;
+        versionDropdown.addEventListener('change', function () {
+            var projectId = document.getElementById('projectname').value;
+            var version = document.getElementById('versionDropdown').value;
 
-        fetch(`/get_data/${projectId}/${version}`)
-            .then(response => response.json())
-            .then(data => {
-                updateTable(data.projDetails);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    })};
+            if (version != "Version History") {
+                fetch(`/get_data/${projectId}/${version}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        updateTable(data.projDetails);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data:', error);
+                    });
+            }
+        })
+    };
 
     function updateTable(projDetails) {
         var tableBody = document.getElementById('projectTable').getElementsByTagName('tbody')[0];
@@ -316,21 +320,23 @@ document.addEventListener("DOMContentLoaded", function () {
     // Function to handle the import button click
     const importDesign = document.getElementById('import-design')
     if (importDesign) {
-    importDesign.addEventListener('click', function () {
-        var projectId = document.getElementById('projectname').value;
-        var pumpID = document.getElementById('importDropdown').value;
+        importDesign.addEventListener('click', function () {
+            var projectId = document.getElementById('projectname').value;
+            var pumpID = document.getElementById('importDropdown').value;
 
-        fetch(`/designData/${projectId}/${pumpID}`)
-            .then(response => response.json())
-            .then(data => {
-                importRow(data)
-                $('#importModal').modal('hide'); // Close the modal after updating the table
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                // Handle error (e.g., show an alert to the user)
-            });
-    });}
+
+            fetch(`/designData/${projectId}/${pumpID}`)
+                .then(response => response.json())
+                .then(data => {
+                    importRow(data)
+                    $('#importModal').modal('hide'); // Close the modal after updating the table
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    // Handle error (e.g., show an alert to the user)
+                });
+        });
+    }
 
     function importRow(data) {
         let table = document.getElementById("projectTable").getElementsByTagName('tbody')[0]
@@ -341,7 +347,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let cell = newRow.cells[i].getElementsByTagName('div')[0]
             cell.contentEditable = 'true'
         }
-    
+
         for (let i = 0; i < 6; i++) {
             let cell = newRow.insertCell(i)
             if (i === 0) {
@@ -349,11 +355,11 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (i === 5) {
                 cell.innerHTML = '<span onclick="deleteRow(this)" class="delete-icon">&#10060;</span>'
             } else {
-                data[0].system === 'english'? unit='hp' : unit='KWH'
+                data[0].system === 'english' ? unit = 'hp' : unit = 'KWH'
                 let placeholderText = i === 1 ? `
                 <span>Submersible Pump,</span><br>
                 <span>${data[0].ph},</span><br>
-                <span>${data[0].power} ${unit},</span>` : (i === 2 ? `${data[0].quantity}` : (i === 3 ? `${(data[0].price).toFixed(2)}` : `${(parseFloat(data[0].price)*parseFloat(data[0].quantity)).toFixed(2)}`))
+                <span>${data[0].power} ${unit},</span>` : (i === 2 ? `${data[0].quantity}` : (i === 3 ? `${(data[0].price).toFixed(2)}` : `${(parseFloat(data[0].price) * parseFloat(data[0].quantity)).toFixed(2)}`))
                 cell.innerHTML = '<div contenteditable="' + (i === 4 ? 'false' : 'true') + '" oninput="updateRowTotal(this)">' + placeholderText + '</div>'
             }
         }
