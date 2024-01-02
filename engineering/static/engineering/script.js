@@ -207,10 +207,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateUnits()
     }
 
-})
-
-
-document.addEventListener("DOMContentLoaded", function () {
     const saveTable = document.getElementById('saveTable')
     if (saveTable) {
         saveTable.addEventListener('click', function () {
@@ -271,9 +267,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         })
     }
-})
 
-document.addEventListener("DOMContentLoaded", function () {
     const versionDropdown = document.getElementById('versionDropdown')
     if (versionDropdown) {
         versionDropdown.addEventListener('change', function () {
@@ -366,3 +360,4 @@ document.addEventListener("DOMContentLoaded", function () {
         updateTotalAmount()
     }
 })
+

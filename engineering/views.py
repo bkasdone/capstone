@@ -54,7 +54,7 @@ def project(request, id):
         })
 def newProj(request, title):
     if request.method == "GET":
-        projects = Project.objects.all()
+        projects = Project.objects.all().order_by("proj_name")
         phases = Phase.objects.all()
         if title == 'Submersible Pump':
             return render(request, "engineering/new_proj.html", {

@@ -2,20 +2,25 @@
 {% load static %}
 
 {% block body %}
-    <div class='container'>
+    <div class='container d-flex justify-content-center mt-3'>
+   
         
         <form action="{% url "newProj" title=title %}" method="POST" onsubmit="return validateFormSubPump()">
             {% csrf_token %}
             <h2>Create New {{ title }}</h2>
             <label>Select Project: </label>
-            {% if title == "Submersible Pump" %}
-            <select class="form-select" aria-label="Default select example" id="projectSelect" name="projectSelect">
+            
+            <select class="form-select w-100" aria-label="Default select example" id="projectSelect" name="projectSelect">
                 <option selected disabled>Select a Project</option>
                 {% for project in projects %}
                     <option value="{{ project.proj_name }}">{{ project.proj_name }}</option>
                 {% endfor %}
             </select><br>
-            <img src="/static/engineering/{{title}}.png" alt="pump" class="image"><br>
+            <div class="text-center">
+            <img src="/static/engineering/{{title}}.png" alt="pump" class="image">
+            </div>
+            <br>
+            <h5>System of Unit </h5>
             <label for="systemEnglish">
                 <input type="radio" id="systemEnglish" class="form-radio" name="system" value="english" checked>
                 English System
@@ -24,12 +29,12 @@
             <label for="systemMetric" class="ml-3">
                 <input type="radio" id="systemMetric" class="form-radio" name="system" value="metric">
                 Metric System
-            </label><br>
+            </label><br><br>
 
             <h5>Recommended power: <strong><span id="result"></span><u><span class="power-unit mt-5"></span></u></strong></h5>
             <input type="hidden" id="power" name="power" value="">
             <br>
-
+            {% if title == "Submersible Pump" %}
             <label for="customRange1" class="form-label">Flow rate:</label>
             <input type="range" class="form-range radio-style" min="0" max="300" id="flowRateRange"><br>
             <label>(<u><span class="flowrate-unit" data-toggle="tooltip" title=""></span></u>): </label><input type="number" id="flowRate">  
@@ -61,11 +66,19 @@
 
             <label>Price: </label>
             <input type="number" name="price"><br>
-
+            <div class="text-center mt-3">
             <button class="btn btn-primary">SUBMIT</button>
+            </div>
         </form>
         {% endif %}
+
+        {% if title == "Chemical Pump" %}
+        {% endif %}
+
+        {% if title == "Roots Blower" %}
+        {% endif %}
     </div>
+
 
 {% block script %}
     <script src="{% static 'engineering/script.js' %}"></script>
